@@ -443,7 +443,7 @@ htmlToImage.toPng(outputEl, {
 
       if (!selectedContent) return alert('Pilih artikel dulu.');
       const plainText = stripHtmlTags(selectedContent).trim().substring(0, 300);
-      const textWithPrefix = '🚨Candilkuya Sports - ' + plainText + '\n\n#Olahraga #Sports #Candilkuya #BreakingNews';
+      const textWithPrefix = '🚨Candilkuya Sports - ' + plainText + '\n\n#Olahraga #infobandung #beritakarawang #Sports #Candilkuya #BreakingNews';
       navigator.clipboard.writeText(textWithPrefix).then(() => {
         alert('Berita berhasil disalin!');
       });
