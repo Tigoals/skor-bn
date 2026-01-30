@@ -443,7 +443,7 @@ htmlToImage.toPng(outputEl, {
 
       if (!selectedContent) return alert('Pilih artikel dulu.');
       const plainText = stripHtmlTags(selectedContent).trim().substring(0, 300);
-      const textWithPrefix = '🚨Score808News - ' + plainText + '\n\n#Olahraga #score808pro #news #score808 #Sports #BreakingNews';
+      const textWithPrefix = '🚨Score808 News - ' + plainText + '\n\n#Olahraga #score808pro #livesports #news #score808 #Sports #BreakingNews';
       navigator.clipboard.writeText(textWithPrefix).then(() => {
         alert('Berita berhasil disalin!');
       });
