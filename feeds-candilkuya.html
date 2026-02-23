@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Berita Kabar Karawang</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .post-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1080px;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    .post-card {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .post-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .post-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .post-card .title {
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    #output {
+      width: 1080px;
+      height: 1080px;
+      position: relative;
+      background: #e5e7eb;
+      border-radius: 5px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .blur-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(25px) brightness(0.5);
+      z-index: 1;
+    }
+
+    #output img.bg-image {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+.judul {
+position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 33px 70px 60px;
+    font-size: 50px;
+    font-weight: 700;
+    color: #111827;
+    background: #ffffff;
+    z-index: 3;
+    text-align: left;
+    line-height: 1.0;
+    border-top: 6px solid #074ad0;
+    border-radius: 24px 24px 0 0;
+    box-sizing: border-box;
+}
+
+
+.judul::before {
+  content: "";
+  display: none;
+  width: 60%;
+  height: 6px;
+  background: linear-gradient(to right, transparent, #ffffff, transparent);
+  border-radius: 100px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.4);
+}
+.main_post {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+    .info-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(to right, #3b82f6, #06b6d4);
+      color: #ffffff;
+      font-weight: bold;
+      padding: 6px 18px;
+      border-radius: 12px;
+      font-size: 18px;
+      z-index: 3;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+.watermark-domain {
+  position: absolute;
+  bottom: 1%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent; /* tanpa background */
+  color: #00a1f5; /* merah cerah */
+  font-size: 20px;
+  font-weight: 700;
+  padding: 0;
+  border-radius: 0;
+  z-index: 3;
+  font-family: 'Segoe UI', sans-serif;
+  /* text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);  biar tetap terlihat di background terang */
+}
+
+.watermark-domain img {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)); /* agar ikon tetap tajam */
+}
+
+    .buttons {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+#moreBtn {
+  background: #e11d48;
+  color: #fff;
+}
+
+    #downloadBtn { background: #10b981; color: #fff; }
+    #copyBtn { background: #facc15; color: #0f172a; }
+    #loadMoreBtn { background: #3b82f6; color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>Berita Candil Kuya</h1>
+  <div class="post-list" id="postList"></div>
+  <button id="loadMoreBtn">Load More</button>
+
+<div class="buttons">
+  <button id="downloadBtn">Download Poster</button>
+  <button id="copyBtn">Copy Isi Berita</button>
+  <button id="moreBtn">Selengkapnya</button>
+</div>
+
+  <div id="output">
+    <img id="blurBg" class="blur-bg" src="" alt="blur background">
+    <img id="bgImage" class="bg-image" src="" alt="background">
+    <div class="info-link">CANDILKUYA</div>
+    <div class="judul" id="judulPreview">Judul Berita</div>
+    <div class="watermark-domain">
+      Read: <img src="https://cdn-icons-png.flaticon.com/512/10453/10453141.png" alt="Facebook" />
+      <span>candil.eu.org</span>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+  <script>
+    let allItems = [];
+    let currentIndex = 0;
+    const itemsPerPage = 6;
+  let selectedContent = '';
+let selectedLink = '';
+
+
+    function stripHtmlTags(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      return div.innerText;
+    }
+
+ function loadFeed() {
+  const url = 'https://sindikasi.okezone.com/index.php/rss/14/RSS2.0';
+
+  fetch(url)
+    .then(response => response.text())
+    .then(data => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(data, 'application/xml');
+      const items = Array.from(xml.getElementsByTagName('item'));
+allItems = items.map(item => {
+  const title = item.querySelector('title')?.textContent.trim() || '';
+  const description = item.querySelector('description')?.textContent || '';
+  const link = item.querySelector('link')?.textContent || '';
+  const mediaContent = item.getElementsByTagName('media:content')[0];
+  const img = mediaContent?.getAttribute('url') || 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjA6kcY4Hzd73dnIOUXZps2RBiFDtK32lafwhLC4s0Wi4ccw2w1Zu5PZLZriKb873MU9OTdwo-ySCLx5uVamhGdqwNlovTYSzqfN_zXiJi-4-DKXFob7Blx2bsgCi10hrUF480ZwpLdjxsGxMQvHcBZUKPD313JB2PH3ovOk0N2TsYLjY4pWlFSma6ahUw/s1600/No%20Image%20250%20x%20166.jpg';
+  return { title, description, link, img };
+});
+
+      showNextItems();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("❌ Gagal memuat feed Okezone.");
+    });
+}
+
+    function showNextItems() {
+      const list = document.getElementById('postList');
+      const nextItems = allItems.slice(currentIndex, currentIndex + itemsPerPage);
+      nextItems.forEach(({ title, description, link, img }) => {
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        card.innerHTML = `<img src="${img}"/><div class="title">${title}</div>`;
+        card.addEventListener('click', () => showPoster(title, img, description, link));
+        list.appendChild(card);
+      });
+
+      currentIndex += itemsPerPage;
+      document.getElementById('loadMoreBtn').style.display = currentIndex >= allItems.length ? 'none' : 'inline-block';
+    }
+
+async function showPoster(title, fallbackImg, content, link) {
+  try {
+    const proxyURL = `https://api.allorigins.win/raw?url=${encodeURIComponent(link)}`;
+    const res = await fetch(proxyURL);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const ogImg = doc.querySelector('meta[property="og:image"]')?.content;
+    const finalImg = ogImg || fallbackImg;
+
+    const proxy = 'https://images.weserv.nl/?url=' + encodeURIComponent(finalImg) + '&w=1080&h=1080&fit=cover&output=jpg&sharp=1';
+
+    const bgImage = document.getElementById('bgImage');
+    const blurBg = document.getElementById('blurBg');
+
+    blurBg.src = proxy + '&t=' + Date.now();
+    blurBg.setAttribute('crossorigin', 'anonymous');
+
+    bgImage.src = proxy + '&t=' + Date.now();
+    bgImage.setAttribute('crossorigin', 'anonymous');
+
+    document.getElementById('judulPreview').textContent = title;
+    document.getElementById('output').style.display = 'block';
+    selectedContent = content;
+    selectedLink = link;
+
+  } catch (err) {
+    alert("❌ Gagal mengambil gambar og:image.");
+    console.error(err);
+  }
+}
+
+    document.getElementById('loadMoreBtn').addEventListener('click', showNextItems);
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const outputEl = document.getElementById('output');
+      const imageEl = document.getElementById('bgImage');
+      if (!imageEl.complete) {
+        alert('Tunggu gambar selesai dimuat.');
+        return;
+      }
+      domtoimage.toBlob(outputEl).then(blob => {
+        const link = document.createElement('a');
+        link.download = 'candil-kuya.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+      }).catch(err => {
+        alert('❌ Gagal membuat gambar.');
+        console.error(err);
+      });
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      if (!selectedContent) return alert('Pilih artikel dulu.');
+      const plainText = stripHtmlTags(selectedContent).trim().substring(0, 300);
+      const text = '🚨CANDILKUYA - ' + plainText + '\n\n#Berita #Bola #sports #okezone #Football\n\n...Follow fb @Candilkuya';
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✔️ Berita berhasil disalin!');
+      });
+    });
+document.getElementById('moreBtn').addEventListener('click', () => {
+  if (!selectedLink) return alert('Pilih artikel dulu.');
+  window.open(selectedLink, '_blank');
+});
+
+    document.addEventListener('DOMContentLoaded', loadFeed);
+  </script>
+</body>
+</html>
