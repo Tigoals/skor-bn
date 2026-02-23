@@ -229,8 +229,8 @@ sans-serif;
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
-  <script>
+ <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>-->
+  <!-- <script>
     let allItems = [];
     let currentIndex = 0;
     const itemsPerPage = 6;
@@ -350,6 +350,407 @@ document.getElementById('moreBtn').addEventListener('click', () => {
 });
 
     document.addEventListener('DOMContentLoaded', loadFeed);
-  </script>
+  </script>-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+
+<script>
+
+let allItems = [];
+let currentIndex = 0;
+const itemsPerPage = 6;
+
+let selectedContent = '';
+let selectedLink = '';
+
+const NOIMAGE =
+'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjA6kcY4Hzd73dnIOUXZps2RBiFDtK32lafwhLC4s0Wi4ccw2w1Zu5PZLZriKb873MU9OTdwo-ySCLx5uVamhGdqwNlovTYSzqfN_zXiJi-4-DKXFob7Blx2bsgCi10hrUF480ZwpLdjxsGxMQvHcBZUKPD313JB2PH3ovOk0N2TsYLjY4pWlFSma6ahUw/s1600/noimage.jpg';
+
+
+function stripHtmlTags(html){
+const div=document.createElement('div');
+div.innerHTML=html;
+return div.innerText;
+}
+
+
+
+function loadFeed(){
+
+const url =
+'https://sindikasi.okezone.com/index.php/rss/14/RSS2.0';
+
+fetch(url)
+
+.then(r=>r.text())
+
+.then(data=>{
+
+const parser=new DOMParser();
+
+const xml=
+parser.parseFromString(
+data,
+'application/xml'
+);
+
+const items=
+Array.from(
+xml.getElementsByTagName('item')
+);
+
+
+allItems=items.map(item=>{
+
+const title=
+item.querySelector('title')
+?.textContent.trim()||'';
+
+const description=
+item.querySelector('description')
+?.textContent||'';
+
+const link=
+item.querySelector('link')
+?.textContent||'';
+
+const mediaContent=
+item.getElementsByTagName('media:content')[0];
+
+const img=
+mediaContent?.getAttribute('url')
+||NOIMAGE;
+
+return{
+title,
+description,
+link,
+img
+};
+
+});
+
+
+showNextItems();
+
+})
+
+.catch(err=>{
+
+console.error(err);
+
+alert("❌ Gagal memuat RSS.");
+
+});
+
+}
+
+
+
+function showNextItems(){
+
+const list=
+document.getElementById('postList');
+
+const nextItems=
+allItems.slice(
+currentIndex,
+currentIndex+itemsPerPage
+);
+
+
+nextItems.forEach(
+({title,description,link,img})=>{
+
+const card=
+document.createElement('div');
+
+card.className='post-card';
+
+card.innerHTML=
+`<img src="${img}">
+<div class="title">
+${title}
+</div>`;
+
+card.onclick=()=>showPoster(
+title,
+img,
+description,
+link
+);
+
+list.appendChild(card);
+
+});
+
+
+currentIndex+=itemsPerPage;
+
+document.getElementById('loadMoreBtn')
+.style.display=
+currentIndex>=allItems.length
+?'none':'inline-block';
+
+}
+
+
+
+async function showPoster(
+title,
+fallbackImg,
+content,
+link
+){
+
+try{
+
+let finalImg=fallbackImg;
+
+
+/* Proxy 1 */
+
+try{
+
+const proxy1=
+'https://api.allorigins.win/raw?url='+
+encodeURIComponent(link);
+
+const res1=
+await fetch(proxy1);
+
+const html1=
+await res1.text();
+
+const doc1=
+new DOMParser()
+.parseFromString(
+html1,
+'text/html'
+);
+
+const og1=
+doc1.querySelector(
+'meta[property="og:image"]'
+)?.content;
+
+if(og1) finalImg=og1;
+
+}catch(e){}
+
+
+
+/* Proxy 2 fallback */
+
+if(!finalImg || finalImg===NOIMAGE){
+
+try{
+
+const proxy2=
+'https://corsproxy.io/?'+
+encodeURIComponent(link);
+
+const res2=
+await fetch(proxy2);
+
+const html2=
+await res2.text();
+
+const doc2=
+new DOMParser()
+.parseFromString(
+html2,
+'text/html'
+);
+
+const og2=
+doc2.querySelector(
+'meta[property="og:image"]'
+)?.content;
+
+if(og2) finalImg=og2;
+
+}catch(e){}
+
+}
+
+
+/* fallback terakhir */
+
+if(!finalImg){
+
+finalImg=NOIMAGE;
+
+}
+
+
+/* Proxy gambar */
+
+const proxyImg=
+
+'https://images.weserv.nl/?url='+
+encodeURIComponent(finalImg)+
+'&w=1080&h=1080&fit=cover&output=jpg&sharp=1';
+
+
+
+const bgImage=
+document.getElementById('bgImage');
+
+const blurBg=
+document.getElementById('blurBg');
+
+
+bgImage.src=
+proxyImg+'&t='+Date.now();
+
+blurBg.src=
+proxyImg+'&t='+Date.now();
+
+
+bgImage.crossOrigin='anonymous';
+blurBg.crossOrigin='anonymous';
+
+
+
+document.getElementById(
+'judulPreview'
+).textContent=title;
+
+
+document.getElementById(
+'output'
+).style.display='block';
+
+
+selectedContent=content;
+
+selectedLink=link;
+
+
+}catch(err){
+
+alert("❌ Gagal mengambil gambar");
+
+console.error(err);
+
+}
+
+}
+
+
+
+document.getElementById(
+'loadMoreBtn'
+).onclick=showNextItems;
+
+
+
+document.getElementById(
+'downloadBtn'
+).onclick=()=>{
+
+const outputEl=
+document.getElementById('output');
+
+const imageEl=
+document.getElementById('bgImage');
+
+if(!imageEl.complete){
+
+alert('Tunggu gambar selesai dimuat');
+
+return;
+
+}
+
+
+domtoimage
+.toBlob(outputEl)
+
+.then(blob=>{
+
+const link=
+document.createElement('a');
+
+link.download=
+'candil-kuya.png';
+
+link.href=
+URL.createObjectURL(blob);
+
+link.click();
+
+})
+
+.catch(err=>{
+
+alert('❌ Gagal membuat gambar');
+
+console.error(err);
+
+});
+
+};
+
+
+
+document.getElementById(
+'copyBtn'
+).onclick=()=>{
+
+if(!selectedContent)
+return alert('Pilih artikel dulu');
+
+const plainText=
+stripHtmlTags(
+selectedContent
+).trim().substring(0,300);
+
+
+const text=
+
+'🚨CANDILKUYA - '+
+plainText+
+
+'\n\n#Berita #Karawang #okezone'+
+
+'\n\nFollow FB Candilkuya';
+
+
+navigator.clipboard
+.writeText(text)
+
+.then(()=>{
+
+alert('✔️ Berhasil disalin');
+
+});
+
+};
+
+
+
+document.getElementById(
+'moreBtn'
+).onclick=()=>{
+
+if(!selectedLink)
+return alert('Pilih artikel dulu');
+
+window.open(
+selectedLink,
+'_blank'
+);
+
+};
+
+
+
+document.addEventListener(
+'DOMContentLoaded',
+loadFeed
+);
+
+</script>
 </body>
 </html>
