@@ -2,210 +2,227 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Berita Kabar Karawang</title>
+  <title>Berita Candil Kuya</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-body{
-font-family:
-system-ui,
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-Inter,
-Roboto,
-Helvetica,
-Arial,
-sans-serif;
-
-background:#0f172a;
-color:#f1f5f9;
-padding:40px 20px;
-display:flex;
-flex-direction:column;
-align-items:center;
+<style>
+:root{
+  --bg:#0b1220;
+  --card:#111827;
+  --accent:#3b82f6;
+  --accent2:#06b6d4;
+  --success:#10b981;
+  --warning:#facc15;
+  --danger:#e11d48;
 }
 
-    .post-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-      max-width: 1080px;
-      width: 100%;
-      margin-bottom: 40px;
-    }
+*{
+  box-sizing:border-box;
+}
 
-    .post-card {
-      background: #1e293b;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:linear-gradient(135deg,#0b1220,#111827);
+  color:#f9fafb;
+  padding:40px 20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
 
-    .post-card:hover {
-      transform: translateY(-4px);
-    }
+/* HEADER */
+h1{
+  font-size:32px;
+  font-weight:900;
+  letter-spacing:1px;
+  margin-bottom:30px;
+  background:linear-gradient(to right,#3b82f6,#06b6d4);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 
-    .post-card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
+/* GRID */
+.post-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:28px;
+  max-width:1200px;
+  width:100%;
+  margin-bottom:40px;
+}
+
+/* CARD */
+.post-card{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  border-radius:20px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:all .3s ease;
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.post-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+.post-card img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  transition:transform .4s ease;
+}
+
+.post-card:hover img{
+  transform:scale(1.05);
+}
 
 .post-card .title{
-padding:16px;
-
-font-family:
-system-ui,
--apple-system,
-Segoe UI,
-Inter,
-Roboto,
-Helvetica,
-Arial,
-sans-serif;
-
-font-size:15px;
-font-weight:600;
-
-line-height:1.4;
+  padding:18px;
+  font-size:16px;
+  font-weight:700;
+  line-height:1.4;
 }
 
-    #output {
-      width: 1080px;
-      height: 1080px;
-      position: relative;
-      background: #e5e7eb;
-      border-radius: 5px;
-      overflow: hidden;
-      display: none;
-    }
-
-    .blur-bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: blur(25px) brightness(0.5);
-      z-index: 1;
-    }
-
-    #output img.bg-image {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-.judul {
-position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px 33px 70px 60px;
-    font-size: 50px;
-    font-weight: 700;
-    color: #111827;
-    background: #ffffff;
-    z-index: 3;
-    text-align: left;
-    line-height: 1.0;
-    border-top: 6px solid #074ad0;
-    border-radius: 24px 24px 0 0;
-    box-sizing: border-box;
+/* BUTTONS */
+button{
+  border:none;
+  border-radius:999px;
+  padding:14px 28px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s ease;
+  letter-spacing:.5px;
 }
 
-
-.judul::before {
-  content: "";
-  display: none;
-  width: 60%;
-  height: 6px;
-  background: linear-gradient(to right, transparent, #ffffff, transparent);
-  border-radius: 100px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.4);
-}
-.main_post {
-  max-width: 100%;
-  margin: 0 auto;
+#loadMoreBtn{
+  background:linear-gradient(to right,var(--accent),var(--accent2));
+  color:#fff;
+  margin-bottom:30px;
 }
 
-    .info-link {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: linear-gradient(to right, #3b82f6, #06b6d4);
-      color: #ffffff;
-      font-weight: bold;
-      padding: 6px 18px;
-      border-radius: 12px;
-      font-size: 18px;
-      z-index: 3;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-.watermark-domain {
-  position: absolute;
-  bottom: 1%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: transparent; /* tanpa background */
-  color: #00a1f5; /* merah cerah */
-  font-size: 20px;
-  font-weight: 700;
-  padding: 0;
-  border-radius: 0;
-  z-index: 3;
-  font-family:
-system-ui,
--apple-system,
-Segoe UI,
-Inter,
-Roboto,
-Helvetica,
-Arial,
-sans-serif;
-  /* text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);  biar tetap terlihat di background terang */
+#loadMoreBtn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 20px rgba(0,0,0,.4);
 }
 
-.watermark-domain img {
-  width: 22px;
-  height: 22px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)); /* agar ikon tetap tajam */
+.buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  justify-content:center;
+  margin-bottom:40px;
 }
 
-    .buttons {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-
-    button {
-      padding: 12px 24px;
-      font-size: 15px;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-#moreBtn {
-  background: #e11d48;
-  color: #fff;
+#downloadBtn{
+  background:var(--success);
+  color:#fff;
 }
 
-    #downloadBtn { background: #10b981; color: #fff; }
-    #copyBtn { background: #facc15; color: #0f172a; }
-    #loadMoreBtn { background: #3b82f6; color: #fff; }
-  </style>
+#copyBtn{
+  background:var(--warning);
+  color:#111;
+}
+
+#moreBtn{
+  background:var(--danger);
+  color:#fff;
+}
+
+button:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 20px rgba(0,0,0,.4);
+}
+
+/* POSTER */
+#output{
+  width:1080px;
+  height:1080px;
+  position:relative;
+  display:none;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 30px 60px rgba(0,0,0,.5);
+}
+
+/* Blur background */
+.blur-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:blur(40px) brightness(.5);
+  transform:scale(1.2);
+}
+
+/* Main image */
+.bg-image{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+/* Branding */
+.info-link{
+  position:absolute;
+  top:40px;
+  left:40px;
+  background:linear-gradient(to right,#3b82f6,#06b6d4);
+  padding:10px 24px;
+  border-radius:50px;
+  font-weight:800;
+  font-size:20px;
+  letter-spacing:2px;
+}
+
+/* Title block */
+.judul{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  padding:50px 60px;
+  font-size:56px;
+  font-weight:900;
+  line-height:1.1;
+  background:linear-gradient(to top,rgba(0,0,0,.85),transparent);
+}
+
+/* Watermark */
+.watermark-domain{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:20px;
+  font-weight:700;
+  opacity:.9;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+
+  #output{
+    width:100%;
+    height:auto;
+    aspect-ratio:1/1;
+  }
+
+  .judul{
+    font-size:32px;
+    padding:30px;
+  }
+
+  h1{
+    font-size:24px;
+  }
+
+}
+</style>
 </head>
 <body>
   <h1>Berita Candil Kuya</h1>
