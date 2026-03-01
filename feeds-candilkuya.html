@@ -5,257 +5,207 @@
   <title>Berita Candil Kuya</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0b1220;
-  --card:#111827;
-  --accent:#3b82f6;
-  --accent2:#06b6d4;
-  --success:#10b981;
-  --warning:#facc15;
-  --danger:#e11d48;
-}
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-*{
-  box-sizing:border-box;
-}
+  h1 {
+    margin-bottom: 30px;
+  }
 
-body{
-  margin:0;
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:linear-gradient(135deg,#0b1220,#111827);
-  color:#f9fafb;
-  padding:40px 20px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
+  /* ================= GRID POST ================= */
+  .post-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1080px;
+    width: 100%;
+    margin-bottom: 40px;
+  }
 
-/* HEADER */
-h1{
-  font-size:32px;
-  font-weight:900;
-  letter-spacing:1px;
-  margin-bottom:30px;
-  background:linear-gradient(to right,#3b82f6,#06b6d4);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
+  .post-card {
+    background: #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
 
-/* GRID */
-.post-list{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:28px;
-  max-width:1200px;
-  width:100%;
-  margin-bottom:40px;
-}
+  .post-card:hover {
+    transform: translateY(-4px);
+  }
 
-/* CARD */
-.post-card{
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(12px);
-  border-radius:20px;
-  overflow:hidden;
-  cursor:pointer;
-  transition:all .3s ease;
-  border:1px solid rgba(255,255,255,0.05);
-}
+  .post-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
 
-.post-card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 20px 40px rgba(0,0,0,0.4);
-}
+  .post-card .title {
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+  }
 
-.post-card img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-  transition:transform .4s ease;
-}
+  /* ================= OUTPUT POSTER ================= */
+  #output {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    background: #e5e7eb;
+    border-radius: 5px;
+    overflow: hidden;
+    display: none;
+  }
 
-.post-card:hover img{
-  transform:scale(1.05);
-}
+  .blur-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(25px) brightness(0.5);
+    z-index: 1;
+  }
 
-.post-card .title{
-  padding:18px;
-  font-size:16px;
-  font-weight:700;
-  line-height:1.4;
-}
+  #output img.bg-image {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 
-/* BUTTONS */
-button{
-  border:none;
-  border-radius:999px;
-  padding:14px 28px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.3s ease;
-  letter-spacing:.5px;
-}
+  /* ================= JUDUL ================= */
+  .judul {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 33px 70px 60px;
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: left;
+    color: #111827;
+    background: #ffffff;
+    border-top: 6px solid #074ad0;
+    border-radius: 24px 24px 0 0;
+    box-sizing: border-box;
+    z-index: 3;
+  }
 
-#loadMoreBtn{
-  background:linear-gradient(to right,var(--accent),var(--accent2));
-  color:#fff;
-  margin-bottom:30px;
-}
+  /* ================= BRAND ================= */
+  .info-link {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    color: #ffffff;
+    font-weight: bold;
+    padding: 6px 18px;
+    border-radius: 12px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    z-index: 3;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  }
 
-#loadMoreBtn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 20px rgba(0,0,0,.4);
-}
+  /* ================= WATERMARK ================= */
+  .watermark-domain {
+    position: absolute;
+    bottom: 1%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Segoe UI', sans-serif;
+    color: #00a1f5;
+    background: transparent;
+    z-index: 3;
+  }
 
-.buttons{
-  display:flex;
-  flex-wrap:wrap;
-  gap:18px;
-  justify-content:center;
-  margin-bottom:40px;
-}
+  .verified {
+    background: #3b82f6;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50px;
+  }
 
-#downloadBtn{
-  background:var(--success);
-  color:#fff;
-}
+  .watermark-domain img {
+    width: 22px;
+    height: 22px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  }
 
-#copyBtn{
-  background:var(--warning);
-  color:#111;
-}
+  /* ================= BUTTON ================= */
+  .buttons {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
 
-#moreBtn{
-  background:var(--danger);
-  color:#fff;
-}
+  button {
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
 
-button:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 20px rgba(0,0,0,.4);
-}
+  button:hover {
+    opacity: 0.9;
+  }
 
- #output{
-  width:1080px;
-  height:1080px;
-  position:relative;
-  background:#000;
-  overflow:hidden;
-  display:none;
-  font-family:Inter,system-ui;
-}
+  #downloadBtn { background: #10b981; color: #fff; }
+  #copyBtn { background: #facc15; color: #0f172a; }
+  #loadMoreBtn { background: #3b82f6; color: #fff; }
+  #moreBtn { background: #e11d48; color: #fff; }
 
-/* BLUR BACKGROUND */
-.blur-bg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  filter:blur(45px) brightness(.35);
-  transform:scale(1.2);
-  z-index:1;
-}
-
-/* GAMBAR UTAMA */
-#output img.bg-image{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  z-index:2;
-}
-
-/* SINGLE GRADIENT OVERLAY */
-#output::after{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:0;
-  width:100%;
-  height:50%;
-  background:linear-gradient(
-    to top,
-    rgba(0,0,0,.9),
-    rgba(0,0,0,.7),
-    rgba(0,0,0,.4),
-    transparent
-  );
-  z-index:3;
-}
-
-/* BRANDING */
-.info-link{
-  position:absolute;
-  top:50px;
-  left:50px;
-  background:linear-gradient(to right,#3b82f6,#06b6d4);
-  padding:12px 28px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:20px;
-  letter-spacing:2px;
-  z-index:5;
-}
-
-/* JUDUL MODERN */
-.judul{
-  position:absolute;
-  bottom:80px;
-  left:70px;
-  right:70px;
-  font-size:60px;
-  font-weight:900;
-  line-height:1.05;
-  color:#fff;
-  z-index:5;
-  text-shadow:0 10px 30px rgba(0,0,0,.8);
-}
-
-.watermark-domain{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:28px;
-  font-weight:900;
-  letter-spacing:2px;
-  color:#ffffff;
-  opacity:.15; /* biar jadi watermark halus */
-  text-transform:uppercase;
-  pointer-events:none;
-}
-  .verified{
-  background:#3b82f6;
-  color:#fff;
-  font-size:12px;
-  padding:2px 6px;
-  border-radius:50px;
-  margin-left:6px;
-}
 </style>
 </head>
+
 <body>
   <h1>Berita Candil Kuya</h1>
+
   <div class="post-list" id="postList"></div>
+
   <button id="loadMoreBtn">Load More</button>
 
-<div class="buttons">
-  <button id="downloadBtn">Download Poster</button>
-  <button id="copyBtn">Copy Isi Berita</button>
-  <button id="moreBtn">Selengkapnya</button>
-</div>
+  <div class="buttons">
+    <button id="downloadBtn">Download Poster</button>
+    <button id="copyBtn">Copy Isi Berita</button>
+    <button id="moreBtn">Selengkapnya</button>
+  </div>
 
   <div id="output">
     <img id="blurBg" class="blur-bg" src="" alt="blur background">
     <img id="bgImage" class="bg-image" src="" alt="background">
+
     <div class="info-link">CANDILKUYA</div>
-    <div class="judul" id="judulPreview">Judul Berita</div>
-   <div class="watermark-domain">
-  candil.eu.org
-  <span class="verified">✔</span>
-</div>
+
+    <div class="judul" id="judulPreview">
+      Judul Berita
+    </div>
+
+    <div class="watermark-domain">
+      candil.eu.org
+      <span class="verified">✔</span>
+    </div>
   </div>
 
  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>-->
