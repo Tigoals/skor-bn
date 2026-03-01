@@ -135,7 +135,7 @@ button:hover{
   box-shadow:0 10px 20px rgba(0,0,0,.4);
 }
 
-  #output {
+ #output{
   width:1080px;
   height:1080px;
   position:relative;
@@ -152,7 +152,7 @@ button:hover{
   width:100%;
   height:100%;
   object-fit:cover;
-  filter:blur(40px) brightness(.4);
+  filter:blur(45px) brightness(.35);
   transform:scale(1.2);
   z-index:1;
 }
@@ -167,67 +167,52 @@ button:hover{
   z-index:2;
 }
 
-/* DARK GRADIENT OVERLAY (biar judul kebaca & modern) */
+/* SINGLE GRADIENT OVERLAY */
 #output::after{
   content:"";
   position:absolute;
   left:0;
   bottom:0;
   width:100%;
-  height:45%;
+  height:50%;
   background:linear-gradient(
     to top,
-    rgba(0,0,0,.85),
-    rgba(0,0,0,.6),
+    rgba(0,0,0,.9),
+    rgba(0,0,0,.7),
+    rgba(0,0,0,.4),
     transparent
   );
   z-index:3;
 }
-/* Branding */
+
+/* BRANDING */
 .info-link{
   position:absolute;
-  top:40px;
-  left:40px;
+  top:50px;
+  left:50px;
   background:linear-gradient(to right,#3b82f6,#06b6d4);
-  padding:10px 24px;
-  border-radius:50px;
+  padding:12px 28px;
+  border-radius:999px;
   font-weight:800;
   font-size:20px;
   letter-spacing:2px;
+  z-index:5;
 }
 
-/* Title block */
+/* JUDUL MODERN */
 .judul{
   position:absolute;
-  bottom:0;
-  left:0;
-  width:100%;
-  padding:50px 60px;
-  font-size:56px;
+  bottom:80px;
+  left:70px;
+  right:70px;
+  font-size:60px;
   font-weight:900;
-  line-height:1.1;
-  background:linear-gradient(to top,rgba(0,0,0,.85),transparent);
+  line-height:1.05;
+  color:#fff;
+  z-index:5;
+  text-shadow:0 10px 30px rgba(0,0,0,.8);
 }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-
-  #output{
-    width:100%;
-    height:auto;
-    aspect-ratio:1/1;
-  }
-
-  .judul{
-    font-size:32px;
-    padding:30px;
-  }
-
-  h1{
-    font-size:24px;
-  }
-
-}
 .watermark-domain{
   position:absolute;
   top:50%;
