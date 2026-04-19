@@ -10,49 +10,76 @@
 <script src="https://unpkg.com/html-to-image"></script>
 
 <style>
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --border:rgba(255,255,255,0.08);
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#22c55e;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: #0f172a;
-  color: #e5e7eb;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: var(--text);
 }
 
 /* HEADER */
 h1 {
   text-align: center;
-  margin: 30px 0 10px;
+  margin: 40px 0 10px;
+  font-size: 28px;
   font-weight: 800;
+  letter-spacing: 1px;
 }
 
 /* UPDATE */
 #updateDate {
   text-align: center;
   font-size: 13px;
-  color: #9ca3af;
-  margin-bottom: 20px;
+  color: var(--muted);
+  margin-bottom: 30px;
 }
 
 /* GRID */
 .post-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
-  gap: 16px;
+  gap: 20px;
   padding: 0 20px;
 }
 
-/* CARD */
+/* CARD PRO */
 .post-card {
+  position: relative;
   background: rgba(255,255,255,0.03);
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
-  transition: 0.25s;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  transition: all .3s ease;
+  backdrop-filter: blur(10px);
 }
 
-.post-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255,255,255,0.15);
+.post-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,0.08),transparent);
+  opacity:0;
+  transition:.4s;
+}
+
+.post-card:hover{
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.post-card:hover::after{
+  opacity:1;
 }
 
 .post-card img {
@@ -61,43 +88,55 @@ h1 {
   object-fit: cover;
 }
 
+/* TITLE */
 .post-card .title {
   padding: 14px;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.4;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* BUTTON */
 .buttons {
   text-align: center;
-  margin: 30px 0;
+  margin: 40px 0;
 }
 
 .buttons button {
-  background: #111827;
-  border: 1px solid #374151;
+  background: linear-gradient(135deg,#111827,#1f2937);
+  border: 1px solid var(--border);
   color: #fff;
-  padding: 10px 18px;
+  padding: 12px 22px;
   border-radius: 999px;
   cursor: pointer;
   margin: 0 6px;
-  transition: 0.2s;
+  font-weight: 600;
+  transition: .25s;
 }
 
 .buttons button:hover {
-  background: #1f2937;
+  transform: scale(1.05);
+  background: linear-gradient(135deg,#1f2937,#374151);
 }
 
-/* POSTER */
+/* ======================
+   POSTER PRO
+====================== */
 #output {
   position: relative;
   width: 1080px;
-  height: 1080px;
+  height: 1080px; /* ubah dari 1080px jadi 1350px */
   margin: 40px auto;
-  border-radius: 12px;
+  border-radius: 6px;
   overflow: hidden;
   display: none;
+  filter: brightness(1.15) contrast(1.1) saturate(1.2);
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
   background: #000;
 }
 
@@ -109,75 +148,107 @@ h1 {
   object-fit: cover;
 }
 
-/* OVERLAY */
+/* OVERLAY CINEMATIC */
 .bg-overlay {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.85),
-    rgba(0,0,0,0.2),
-    transparent
-  );
+  background:
+    radial-gradient(circle at top, transparent 20%, rgba(0,0,0,0.8)),
+    linear-gradient(to top, rgba(0,0,0,0.95), transparent 50%);
 }
 
 /* LOGO */
 .custom-logo {
   position: absolute;
-  top: 30px;
-  left: 30px;
-  font-size: 26px;
+  top: 40px;
+  left: 40px;
+  font-size: 28px;
   font-weight: 800;
+  letter-spacing: 1px;
 }
 
-/* BREAKING */
+/* BADGE */
 .breaking-badge {
   position: absolute;
-  top: 30px;
-  right: 30px;
-  background: red;
-  padding: 6px 12px;
-  font-size: 26px;
+  top: 40px;
+  right: 40px;
+  background: linear-gradient(135deg,#ef4444,#dc2626);
+  padding: 8px 16px;
+  font-size: 14px;
   font-weight: 700;
-  border-radius: 4px;
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(255,0,0,0.5);
 }
 
-/* TITLE */
+/* TITLE POSTER */
 .judul-container {
   position: absolute;
-  bottom: 100px;
-  padding: 0 50px;
+  bottom: 120px;
+  padding: 0 60px;
 }
 
 .judul-container span {
-  font-size: 60px;
-  font-weight: 800;
+  font-size: 64px;
+  font-weight: 900;
   line-height: 1.1;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  letter-spacing: -1px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  text-shadow: 0 8px 40px rgba(0,0,0,0.9);
 }
 
 /* WATERMARK */
 .watermark-domain {
   position: absolute;
-  bottom: 68px;
-  left: 53px;
+  bottom: 60px;
+  left: 60px;
 
   font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.85);
 
-  color: rgba(255, 255, 255, 0.85);
+  padding: 6px 14px;
+  border-radius: 8px;
 
-  padding: 6px 12px;
-  border-radius: 6px;
-
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(6px);
-
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+}
+/* LOGO WRAP */
+.logo-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
+/* FACEBOOK ICON STYLE */
+.fb-icon{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-weight:900;
+  font-size:20px;
+
+  color:#fff;
+  background:linear-gradient(135deg,#1877f2,#0a58ca);
+
+  box-shadow:0 4px 12px rgba(24,119,242,0.6);
+}
+
+/* TEXT BRAND */
+.logo-wrap span{
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:1px;
+}
 </style>
 </head>
 
@@ -199,7 +270,12 @@ h1 {
   <img id="bgImage"/>
   <div class="bg-overlay"></div>
 
-  <div class="custom-logo">SCORE808Pro</div>
+ <div class="custom-logo">
+  <div class="logo-wrap">
+    <div class="fb-icon">f</div>
+    <span>SCORE808Pro</span>
+  </div>
+</div>
   <div class="breaking-badge">NEWS</div>
 
   <div class="judul-container">
@@ -345,9 +421,14 @@ downloadBtn.onclick = async () => {
     await waitRenderReady();
 
     const dataUrl = await htmlToImage.toPng(el('output'), {
-      pixelRatio: 3,
-      cacheBust: true,
-      backgroundColor: '#000'
+     pixelRatio: 2,
+  cacheBust: true,
+  style: {
+    margin: '0',
+    padding: '0',
+    boxSizing: 'border-box',
+    filter: 'brightness(1.15) contrast(1.1) saturate(1.2)' // ← Tambahan penting
+  }
     });
 
     const a = document.createElement('a');
@@ -371,6 +452,7 @@ copyBtn.onclick = () => {
   const title = el("judulPreview").textContent;
 
   const caption = `🚨Score808pro News Hari Ini
+
 🔥 ${title}
 
 ${shortText}...
