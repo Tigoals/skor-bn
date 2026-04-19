@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>808Pro News</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html-to-image"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* HEADER */
+h1 {
+  text-align: center;
+  margin: 30px 0 10px;
+  font-weight: 800;
+}
+
+/* UPDATE */
+#updateDate {
+  text-align: center;
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 20px;
+}
+
+/* GRID */
+.post-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap: 16px;
+  padding: 0 20px;
+}
+
+/* CARD */
+.post-card {
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.25s;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.post-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.post-card .title {
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* BUTTON */
+.buttons {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.buttons button {
+  background: #111827;
+  border: 1px solid #374151;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin: 0 6px;
+  transition: 0.2s;
+}
+
+.buttons button:hover {
+  background: #1f2937;
+}
+
+/* POSTER */
+#output {
+  position: relative;
+  width: 1080px;
+  height: 1080px;
+  margin: 40px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  display: none;
+  background: #000;
+}
+
+/* IMAGE */
+#bgImage {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* OVERLAY */
+.bg-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.85),
+    rgba(0,0,0,0.2),
+    transparent
+  );
+}
+
+/* LOGO */
+.custom-logo {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+/* BREAKING */
+.breaking-badge {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: red;
+  padding: 6px 12px;
+  font-size: 26px;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+/* TITLE */
+.judul-container {
+  position: absolute;
+  bottom: 100px;
+  padding: 0 50px;
+}
+
+.judul-container span {
+  font-size: 60px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+
+/* WATERMARK */
+.watermark-domain {
+  position: absolute;
+  bottom: 68px;
+  left: 53px;
+
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+
+  color: rgba(255, 255, 255, 0.85);
+
+  padding: 6px 12px;
+  border-radius: 6px;
+
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>808Pro News</h1>
+<div id="updateDate"></div>
+
+<div class="post-list" id="postList"></div>
+
+<div class="buttons">
+  <button id="downloadBtn">Download</button>
+  <button id="copyBtn">Copy Caption</button>
+  <button id="loadMoreBtn">Load More</button>
+</div>
+
+<!-- POSTER -->
+<div id="output">
+  <img id="bgImage"/>
+  <div class="bg-overlay"></div>
+
+  <div class="custom-logo">SCORE808Pro</div>
+  <div class="breaking-badge">NEWS</div>
+
+  <div class="judul-container">
+    <span id="judulPreview"></span>
+  </div>
+
+  <div class="watermark-domain">www.beritanasional.eu.org</div>
+</div>
+
+<script>
+
+let selectedContent = '';
+let allItems = [];
+let itemsPerPage = 6;
+let currentIndex = 0;
+
+const el = id => document.getElementById(id);
+
+/* =========================
+   UTIL
+========================= */
+function stripHtmlTags(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.innerText || '';
+}
+
+/* =========================
+   WAIT RENDER (ANTI BUG DOWNLOAD)
+========================= */
+function waitImage(img){
+  return new Promise(resolve=>{
+    if(img.complete) return resolve();
+    img.onload = resolve;
+    img.onerror = resolve;
+  });
+}
+
+async function waitRenderReady(){
+  const img = el('bgImage');
+  await waitImage(img);
+  await document.fonts.ready;
+  await new Promise(r=>setTimeout(r,300));
+}
+
+/* =========================
+   LOAD RSS
+========================= */
+function loadXMLFeed() {
+  fetch('https://www.cnnindonesia.com/olahraga/rss')
+    .then(res => res.text())
+    .then(data => {
+      const xml = new DOMParser().parseFromString(data, 'text/xml');
+      displayFeedList(xml);
+    })
+    .catch(()=> alert("Gagal load RSS"));
+}
+
+document.addEventListener('DOMContentLoaded', loadXMLFeed);
+
+/* =========================
+   DISPLAY LIST
+========================= */
+function displayFeedList(xml) {
+  const items = Array.from(xml.getElementsByTagName('item'));
+  allItems = items;
+  currentIndex = 0;
+
+  el('updateDate').innerHTML =
+    "Update: " + new Date(xml.getElementsByTagName('lastBuildDate')[0].textContent).toLocaleString();
+
+  el('postList').innerHTML = '';
+  showNextItems();
+}
+
+/* =========================
+   LOAD MORE
+========================= */
+function showNextItems() {
+  const list = el('postList');
+  const next = allItems.slice(currentIndex, currentIndex + itemsPerPage);
+
+  next.forEach(item => {
+    const title = item.getElementsByTagName('title')[0].textContent;
+    const link = item.getElementsByTagName('link')[0].textContent;
+    const desc = item.getElementsByTagName('description')[0].textContent;
+
+    const match = desc.match(/<img[^>]+src=["']([^"'>]+)["']/);
+    const img = match ? match[1] : '';
+
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    card.innerHTML = `
+      <img src="${img}">
+      <div class="title">${title}</div>
+    `;
+
+    card.onclick = () => showPoster(title, img, desc, link);
+    list.appendChild(card);
+  });
+
+  currentIndex += itemsPerPage;
+
+  el('loadMoreBtn').style.display =
+    currentIndex >= allItems.length ? 'none' : 'inline-block';
+}
+
+/* =========================
+   SHOW POSTER (FIX CDN)
+========================= */
+async function showPoster(title, fallbackImg, content, link) {
+  const output = el('output');
+  output.style.display = 'block';
+
+  try {
+    const res = await fetch(link);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const ogImg = doc.querySelector('meta[property="og:image"]')?.content;
+
+    const finalImg = ogImg || fallbackImg || '';
+
+    // 🔥 CDN STABIL + SIZE FIX
+    el('bgImage').src =
+      'https://images.weserv.nl/?url=' + encodeURIComponent(finalImg) + '&w=1080&h=1080&fit=cover';
+
+    el('judulPreview').textContent = title;
+    selectedContent = content;
+
+  } catch {
+    alert('Gagal load gambar');
+  }
+}
+
+/* =========================
+   DOWNLOAD (FIX UTAMA)
+========================= */
+downloadBtn.onclick = async () => {
+
+  if(!el('output').style.display) return alert("Pilih berita dulu");
+
+  try{
+    await waitRenderReady();
+
+    const dataUrl = await htmlToImage.toPng(el('output'), {
+      pixelRatio: 3,
+      cacheBust: true,
+      backgroundColor: '#000'
+    });
+
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = 'news-808pro.png';
+    a.click();
+
+  }catch{
+    alert("Gagal generate gambar");
+  }
+};
+
+/* =========================
+   COPY SEO
+========================= */
+copyBtn.onclick = () => {
+  if (!selectedContent) return alert('Pilih berita dulu');
+
+  const cleanText = stripHtmlTags(selectedContent).trim();
+  const shortText = cleanText.substring(0, 180);
+  const title = el("judulPreview").textContent;
+
+  const caption = `🚨Score808pro News Hari Ini
+🔥 ${title}
+
+${shortText}...
+
+👉 Baca selengkapnya sekarang juga sebelum terlewat! @score808pro
+
+#beritaterkini #score808pro #breakingnews #viralhariini #newsupdate #indonesia #trending #olahraga`;
+
+  navigator.clipboard.writeText(caption).then(() => {
+    alert("✅ Caption SEO berhasil disalin!");
+  });
+};
+
+/* =========================
+   LOAD MORE BTN
+========================= */
+loadMoreBtn.onclick = showNextItems;
+
+</script>
+
+</body>
+</html>
