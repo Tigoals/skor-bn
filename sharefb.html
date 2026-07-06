@@ -139,7 +139,26 @@ h1 {
   box-shadow: 0 0 20px rgba(0,0,0,0.4);
   background: #000;
 }
+#output::before{
 
+content:"";
+
+position:absolute;
+
+inset:0;
+
+opacity:.06;
+
+background-image:
+radial-gradient(#ffffff 1px,transparent 1px);
+
+background-size:6px 6px;
+
+mix-blend-mode:overlay;
+
+pointer-events:none;
+
+}
 /* IMAGE */
 #bgImage {
   position: absolute;
@@ -182,37 +201,64 @@ h1 {
 }
 
 /* TITLE POSTER */
-.judul-container {
-  position: absolute;
-  bottom: 120px;
-  padding: 0 60px;
+.judul-container{
+    position:absolute;
+    left:70px;
+    right:70px;
+    bottom:110px;
 }
 
-.judul-container span {
-  font-size: 64px;
-  font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: -1px;
+.judul-container span{
 
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    font-size:70px;
 
-  text-shadow: 0 8px 40px rgba(0,0,0,0.9);
+    font-weight:900;
+
+    line-height:1.08;
+
+    letter-spacing:-2px;
+
+    color:white;
+
+    text-shadow:
+    0 10px 30px rgba(0,0,0,.8);
+
 }
+.judul-container::before{
 
+    content:"";
+
+    display:block;
+
+    width:110px;
+
+    height:8px;
+
+    margin-bottom:25px;
+
+    border-radius:20px;
+
+    background:#22c55e;
+
+}
 /* WATERMARK */
 .watermark-domain {
     position: absolute;
-    bottom: 60px;
-    left: 60px;
-    font-size: 20px;
-    color: rgb(249 255 0 / 85%);
-    padding: 6px 14px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
+    left:70px;
+
+    bottom:45px;
+
+    padding:0;
+
+    background:none;
+
+    color:rgba(255,255,255,.75);
+
+    font-size:22px;
+
+    font-weight:600;
+
+    letter-spacing:1px;
 }
 /* LOGO WRAP */
 .logo-wrap{
@@ -241,6 +287,19 @@ h1 {
   font-size:30px;
   font-weight:800;
   letter-spacing:1px;
+}
+.poster-date{
+
+    position:absolute;
+
+    left:70px;
+
+    bottom:80px;
+
+    color:#9ca3af;
+
+    font-size:18px;
+
 }
 </style>
 </head>
@@ -276,6 +335,7 @@ h1 {
   </div>
 
   <div class="watermark-domain">www.beritanasional.eu.org</div>
+  <div class="poster-date" id="posterDate"></div>
 </div>
 
 <script>
@@ -414,7 +474,7 @@ downloadBtn.onclick = async () => {
     await waitRenderReady();
 
     const dataUrl = await htmlToImage.toPng(el('output'), {
-     pixelRatio: 2,
+     pixelRatio: 4,
   cacheBust: true,
   style: {
     margin: '0',
@@ -463,7 +523,12 @@ ${shortText}...
    LOAD MORE BTN
 ========================= */
 loadMoreBtn.onclick = showNextItems;
-
+document.getElementById("posterDate").textContent =
+new Date().toLocaleDateString("id-ID",{
+    day:"numeric",
+    month:"long",
+    year:"numeric"
+});
 </script>
 
 </body>
