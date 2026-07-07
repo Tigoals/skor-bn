@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>808Pro News</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/html-to-image"></script>
+
 <style>
 :root{
   --bg:#020617;
@@ -176,15 +178,56 @@ pointer-events:none;
 }
 
 /* LOGO */
-.custom-logo {
-  position: absolute;
-  top: 40px;
-  left: 40px;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
+.custom-logo{
+    position:absolute;
+    top:40px;
+    left:40px;
 
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:6px 12px;
+    min-height:56px;
+
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#fff;
+
+    /* PRO Background */
+    background:linear-gradient(
+        135deg,
+        rgba(12,20,40,.92),
+        rgba(24,35,60,.78)
+    );
+
+    border:1px solid rgba(255,255,255,.12);
+    border-left:4px solid #00d4ff;
+    border-radius:16px;
+
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.12);
+}
+.custom-logo::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.18),
+            transparent 45%
+        );
+
+    pointer-events:none;
+}
 /* BADGE */
 .breaking-badge {
     position: absolute;
@@ -222,41 +265,26 @@ pointer-events:none;
     0 10px 30px rgba(0,0,0,.8);
 
 }
-.judul-container::before{
-
-    content:"";
-
-    display:block;
-
-    width:110px;
-
-    height:8px;
-
-    margin-bottom:25px;
-
-    border-radius:20px;
-
-    background:#22c55e;
-
+.judul-container::before {
+    content: "";
+    display: block;
+    width: 195px;
+    height: 7px;
+    margin-bottom: 25px;
+    border-radius: 20px;
+    background: #F44336;
 }
 /* WATERMARK */
 .watermark-domain {
     position: absolute;
-    left:70px;
-
-    bottom:45px;
-
-    padding:0;
-
-    background:none;
-
-    color:rgba(255,255,255,.75);
-
-    font-size:22px;
-
-    font-weight:600;
-
-    letter-spacing:1px;
+    left: 70px;
+    bottom: 45px;
+    padding: 0;
+    background: none;
+    color: #F44336;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 /* LOGO WRAP */
 .logo-wrap{
@@ -286,18 +314,12 @@ pointer-events:none;
   font-weight:800;
   letter-spacing:1px;
 }
-.poster-date{
-
-    position:absolute;
-
-    left:70px;
-
-    bottom:80px;
-
-    color:#9ca3af;
-
-    font-size:18px;
-
+.poster-date {
+    position: absolute;
+    left: 70px;
+    bottom: 35%;
+    color: #9ca3af;
+    font-size: 25px;
 }
 </style>
 </head>
@@ -327,13 +349,12 @@ pointer-events:none;
   </div>
 </div>
   <div class="breaking-badge">NEWS</div>
-
+  <div class="poster-date" id="posterDate"></div>
   <div class="judul-container">
     <span id="judulPreview"></span>
   </div>
 
   <div class="watermark-domain">www.beritanasional.eu.org</div>
-  <div class="poster-date" id="posterDate"></div>
 </div>
 
 <script>
@@ -472,7 +493,7 @@ downloadBtn.onclick = async () => {
     await waitRenderReady();
 
     const dataUrl = await htmlToImage.toPng(el('output'), {
-     pixelRatio: 4,
+     pixelRatio: 3,
   cacheBust: true,
   style: {
     margin: '0',
@@ -492,6 +513,14 @@ downloadBtn.onclick = async () => {
   }
 };
 
+const now = new Date();
+
+const today = now.toLocaleDateString("id-ID", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric"
+});
 /* =========================
    COPY SEO
 ========================= */
@@ -502,15 +531,18 @@ copyBtn.onclick = () => {
   const shortText = cleanText.substring(0, 180);
   const title = el("judulPreview").textContent;
 
-  const caption = `🚨Score808 pro News Hari Ini
+const caption = `📰 Score808 Pro News
+📅 ${today}
 
-🔥 ${title}
+🚨 ${title}
 
-${shortText}...
+🔥${shortText}...
 
-👉 Baca selengkapnya sekarang juga sebelum terlewat! IG: @score808pro
+📌 Simak berita lengkap dan update terbaru hanya di fb: Score808 Pro News.
 
-#score808 #beritaterkini #score808pro #breakingnews #viralhariini #newsupdate #indonesia #tigoals #trending #olahraga`;
+📲 Ikuti Instagram @score808pro untuk informasi sepak bola dan olahraga setiap hari.
+
+#Score808 #Score808Pro #FootballNews #BreakingNews #SportsNews #SepakBola #LigaInggris #LigaChampions #LiveScore #Trending`;
 
   navigator.clipboard.writeText(caption).then(() => {
     alert("✅ Caption SEO berhasil disalin!");
