@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>808Pro News</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html-to-image"></script>
+
+<style>
+<style>
+:root{
+    --bg:#030712;
+    --bg-soft:#0b1120;
+    --card:#0f172a;
+    --card-hover:#172033;
+
+    --text:#f8fafc;
+    --muted:#94a3b8;
+
+    --primary:#2563eb;
+    --primary-2:#38bdf8;
+    --danger:#ef4444;
+
+    --border:rgba(255,255,255,.08);
+
+    --radius:20px;
+}
+
+/* =========================
+   RESET
+========================= */
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color:var(--text);
+
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(37,99,235,.18),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 100% 20%,
+            rgba(14,165,233,.08),
+            transparent 30%
+        ),
+        #030712;
+}
+
+
+/* =========================
+   APP HEADER
+========================= */
+
+h1{
+    margin:0;
+    padding:42px 20px 8px;
+
+    text-align:center;
+
+    font-size:clamp(24px,4vw,34px);
+    line-height:1;
+
+    font-weight:900;
+    letter-spacing:-1px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff,
+            #cbd5e1 55%,
+            #60a5fa
+        );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+#updateDate{
+    text-align:center;
+
+    margin:12px 20px 34px;
+
+    color:#64748b;
+
+    font-size:12px;
+    font-weight:600;
+
+    letter-spacing:.4px;
+}
+
+
+/* =========================
+   NEWS GRID
+========================= */
+
+.post-list{
+    width:min(1180px,100%);
+
+    margin:auto;
+
+    padding:
+        0 22px
+        20px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(270px,1fr)
+        );
+
+    gap:20px;
+}
+
+
+/* =========================
+   NEWS CARD
+========================= */
+
+.post-card{
+    position:relative;
+
+    overflow:hidden;
+
+    min-height:255px;
+
+    cursor:pointer;
+
+    border-radius:20px;
+
+    border:1px solid var(--border);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.018)
+        );
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.28);
+
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        border-color .35s,
+        box-shadow .35s;
+}
+
+.post-card:hover{
+    transform:translateY(-7px);
+
+    border-color:
+        rgba(96,165,250,.38);
+
+    box-shadow:
+        0 22px 55px rgba(0,0,0,.48),
+        0 0 0 1px rgba(59,130,246,.05);
+}
+
+
+/* image */
+
+.post-card img{
+    display:block;
+
+    width:100%;
+    height:175px;
+
+    object-fit:cover;
+
+    transition:
+        transform .55s cubic-bezier(.2,.8,.2,1),
+        filter .35s;
+}
+
+.post-card:hover img{
+    transform:scale(1.055);
+
+    filter:
+        brightness(.82)
+        saturate(1.12);
+}
+
+
+/* image overlay */
+
+.post-card::before{
+    content:"";
+
+    position:absolute;
+
+    inset:0 0 auto 0;
+
+    height:175px;
+
+    z-index:1;
+
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.05),
+            transparent 45%,
+            rgba(0,0,0,.72)
+        );
+}
+
+
+/* shine */
+
+.post-card::after{
+    content:"";
+
+    position:absolute;
+
+    inset:-100%;
+
+    z-index:3;
+
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            115deg,
+            transparent 35%,
+            rgba(255,255,255,.10) 50%,
+            transparent 65%
+        );
+
+    transform:translateX(-40%);
+
+    transition:
+        transform .7s ease;
+}
+
+.post-card:hover::after{
+    transform:translateX(40%);
+}
+
+
+/* title */
+
+.post-card .title{
+    position:relative;
+
+    z-index:5;
+
+    padding:
+        17px
+        18px
+        19px;
+
+    font-size:14px;
+
+    font-weight:750;
+
+    line-height:1.5;
+
+    letter-spacing:-.15px;
+
+    color:#f8fafc;
+
+    display:-webkit-box;
+
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+
+    overflow:hidden;
+}
+
+
+/* =========================
+   CONTROL BAR
+========================= */
+
+.buttons{
+    width:min(1180px,100%);
+
+    margin:
+        10px auto
+        55px;
+
+    padding:0 22px;
+
+    display:flex;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+}
+
+.buttons button{
+    position:relative;
+
+    min-width:130px;
+
+    padding:
+        12px
+        20px;
+
+    border-radius:12px;
+
+    border:1px solid rgba(255,255,255,.09);
+
+    color:#e2e8f0;
+
+    background:
+        linear-gradient(
+            180deg,
+            #111827,
+            #0b1220
+        );
+
+    font-family:inherit;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    letter-spacing:.25px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,.22);
+
+    transition:
+        transform .25s,
+        border-color .25s,
+        background .25s,
+        box-shadow .25s;
+}
+
+.buttons button:hover{
+    transform:translateY(-2px);
+
+    border-color:
+        rgba(96,165,250,.4);
+
+    background:
+        linear-gradient(
+            180deg,
+            #172033,
+            #0f172a
+        );
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.35);
+}
+
+.buttons button:active{
+    transform:scale(.97);
+}
+
+
+/* =========================
+   POSTER
+========================= */
+
+#output{
+    position:relative;
+
+    width:1080px;
+    height:1350px;
+
+    margin:
+        40px auto
+        70px;
+
+    overflow:hidden;
+
+    display:none;
+
+    border-radius:12px;
+
+    background:#000;
+
+    box-shadow:
+        0 35px 100px rgba(0,0,0,.65);
+
+    filter:
+        brightness(1.06)
+        contrast(1.08)
+        saturate(1.08);
+}
+
+
+/* poster frame */
+
+#output::before{
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:20;
+
+    pointer-events:none;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(0,0,0,.25);
+}
+
+
+/* cinematic vignette */
+
+#output::after{
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:4;
+
+    pointer-events:none;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            transparent 35%,
+            rgba(0,0,0,.20) 65%,
+            rgba(0,0,0,.72) 100%
+        );
+}
+
+
+/* =========================
+   BACKGROUND IMAGE
+========================= */
+
+#bgImage{
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transform:scale(1.015);
+}
+
+
+/* =========================
+   CINEMATIC OVERLAY
+========================= */
+
+.bg-overlay{
+    position:absolute;
+
+    inset:0;
+
+    z-index:2;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(2,6,23,.55) 0%,
+            rgba(2,6,23,.05) 28%,
+            rgba(2,6,23,.10) 45%,
+            rgba(2,6,23,.82) 72%,
+            rgba(2,6,23,.98) 100%
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.38),
+            transparent 45%,
+            rgba(0,0,0,.22)
+        );
+}
+
+
+/* =========================
+   TOP BRAND
+========================= */
+
+.custom-logo{
+    position:absolute;
+
+    top:42px;
+    left:48px;
+
+    z-index:10;
+
+    display:flex;
+    align-items:center;
+
+    min-height:62px;
+
+    padding:
+        8px 20px
+        8px 12px;
+
+    border-radius:18px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.16);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15,23,42,.94),
+            rgba(15,23,42,.68)
+        );
+
+    box-shadow:
+        0 14px 40px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.12);
+
+    /* backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px);*/
+}
+
+.custom-logo::before{
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    top:10px;
+    bottom:10px;
+
+    width:4px;
+
+    border-radius:0 5px 5px 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            #38bdf8,
+            #2563eb
+        );
+
+    box-shadow:
+        0 0 18px rgba(56,189,248,.55);
+}
+
+
+/* =========================
+   LOGO
+========================= */
+
+.logo-wrap{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+.fb-icon{
+    width:42px;
+    height:42px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    color:#fff;
+
+    font-size:31px;
+    font-weight:900;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1877f2,
+            #0759c9
+        );
+
+    box-shadow:
+        0 8px 20px rgba(24,119,242,.35);
+}
+
+.logo-wrap span{
+    font-size:28px;
+
+    font-weight:900;
+
+    letter-spacing:-.8px;
+
+    color:#fff;
+}
+
+
+/* =========================
+   NEWS BADGE
+========================= */
+
+.breaking-badge{
+    position:absolute;
+
+    top:46px;
+    right:48px;
+
+    z-index:10;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    padding:
+        10px 17px;
+
+    border-radius:10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.15);
+
+    color:#fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #b91c1c
+        );
+
+    font-size:19px;
+
+    font-weight:900;
+
+    letter-spacing:1.5px;
+
+    box-shadow:
+        0 10px 30px rgba(239,68,68,.28);
+}
+
+.breaking-badge::before{
+    content:"";
+
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    box-shadow:
+        0 0 0 5px
+        rgba(255,255,255,.13);
+}
+
+
+/* =========================
+   DATE
+========================= */
+
+.poster-date{
+    position:absolute;
+
+    left:72px;
+
+    bottom:408px;
+
+    z-index:10;
+
+    color:#cbd5e1;
+
+    font-size:24px;
+
+    font-weight:600;
+
+    letter-spacing:.3px;
+
+    text-shadow:
+        0 4px 14px rgba(0,0,0,.8);
+}
+
+.poster-date::before{
+    content:"";
+
+    display:inline-block;
+
+    width:9px;
+    height:9px;
+
+    margin:
+        0 11px
+        2px 0;
+
+    border-radius:50%;
+
+    background:#38bdf8;
+
+    box-shadow:
+        0 0 14px rgba(56,189,248,.7);
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.judul-container{
+    position:absolute;
+
+    left:70px;
+    right:70px;
+
+    bottom:145px;
+
+    z-index:10;
+}
+
+.judul-container::before{
+    content:"";
+
+    display:block;
+
+    width:180px;
+    height:7px;
+
+    margin-bottom:28px;
+
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ef4444,
+            #f97316
+        );
+
+    box-shadow:
+        0 0 20px rgba(239,68,68,.28);
+}
+
+.judul-container span{
+    display:block;
+
+    color:#fff;
+
+    font-size:70px;
+
+    font-weight:950;
+
+    line-height:1.04;
+
+    letter-spacing:-3px;
+
+    text-wrap:balance;
+
+    text-shadow:
+        0 5px 18px rgba(0,0,0,.65),
+        0 16px 40px rgba(0,0,0,.55);
+}
+
+
+/* =========================
+   WATERMARK
+========================= */
+
+.watermark-domain{
+    position:absolute;
+
+    left:72px;
+    bottom:58px;
+
+    z-index:10;
+
+    color:
+        rgba(255,255,255,.72);
+
+    font-size:20px;
+
+    font-weight:700;
+
+    letter-spacing:.8px;
+
+    text-shadow:
+        0 3px 12px rgba(0,0,0,.7);
+}
+
+.watermark-domain::before{
+    content:"";
+
+    display:inline-block;
+
+    width:28px;
+    height:3px;
+
+    margin:
+        0 10px
+        5px 0;
+
+    border-radius:999px;
+
+    background:#ef4444;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    h1{
+        padding-top:28px;
+    }
+
+    .post-list{
+        padding:0 14px 15px;
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap:12px;
+    }
+
+    .post-card{
+        min-height:210px;
+
+        border-radius:15px;
+    }
+
+    .post-card img{
+        height:125px;
+    }
+
+    .post-card::before{
+        height:125px;
+    }
+
+    .post-card .title{
+        padding:12px;
+
+        font-size:12px;
+    }
+
+    .buttons{
+        padding:0 14px;
+    }
+
+    .buttons button{
+        flex:1;
+
+        min-width:0;
+    }
+
+    #output{
+        width:min(
+            1080px,
+            calc(100vw - 20px)
+        );
+
+        height:auto;
+
+        aspect-ratio:1080 / 1350;
+
+        margin:25px auto;
+    }
+
+    .custom-logo{
+        top:4%;
+        left:4%;
+
+        min-height:auto;
+
+        padding:6px 13px 6px 9px;
+
+        border-radius:12px;
+    }
+
+    .fb-icon{
+        width:30px;
+        height:30px;
+
+        border-radius:9px;
+
+        font-size:22px;
+    }
+
+    .logo-wrap{
+        gap:8px;
+    }
+
+    .logo-wrap span{
+        font-size:18px;
+    }
+
+    .breaking-badge{
+        top:4%;
+        right:4%;
+
+        padding:7px 11px;
+
+        font-size:11px;
+    }
+
+    .breaking-badge::before{
+        width:5px;
+        height:5px;
+    }
+
+    .poster-date{
+        left:6.5%;
+        bottom:30%;
+
+        font-size:12px;
+    }
+
+    .poster-date::before{
+        width:5px;
+        height:5px;
+
+        margin-right:6px;
+    }
+
+    .judul-container{
+        left:6.5%;
+        right:6.5%;
+
+        bottom:11%;
+    }
+
+    .judul-container::before{
+        width:70px;
+        height:4px;
+
+        margin-bottom:12px;
+    }
+
+    .judul-container span{
+        font-size:
+            clamp(
+                25px,
+                6vw,
+                52px
+            );
+
+        letter-spacing:-1.2px;
+    }
+
+    .watermark-domain{
+        left:6.5%;
+        bottom:4.5%;
+
+        font-size:10px;
+    }
+
+    .watermark-domain::before{
+        width:15px;
+        height:2px;
+
+        margin-right:5px;
+    }
+}
+</style>
+</style>
+</head>
+
+<body>
+
+<h1>808Pro News</h1>
+<div id="updateDate"></div>
+
+<div class="post-list" id="postList"></div>
+
+<div class="buttons">
+  <button id="downloadBtn">Download</button>
+  <button id="copyBtn">Copy Caption</button>
+  <button id="loadMoreBtn">Load More</button>
+</div>
+
+<!-- POSTER -->
+<div id="output">
+  <img id="bgImage"/>
+  <div class="bg-overlay"></div>
+
+ <div class="custom-logo">
+  <div class="logo-wrap">
+    <div class="fb-icon">f</div>
+    <span>Score808pro</span>
+  </div>
+</div>
+  <div class="breaking-badge">NEWS</div>
+  <div class="poster-date" id="posterDate"></div>
+  <div class="judul-container">
+    <span id="judulPreview"></span>
+  </div>
+
+  <div class="watermark-domain">www.beritanasional.eu.org</div>
+</div>
+
+<script>
+
+let selectedContent = '';
+let allItems = [];
+let itemsPerPage = 6;
+let currentIndex = 0;
+
+const el = id => document.getElementById(id);
+
+/* =========================
+   UTIL
+========================= */
+function stripHtmlTags(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.innerText || '';
+}
+
+/* =========================
+   WAIT RENDER (ANTI BUG DOWNLOAD)
+========================= */
+function waitImage(img){
+  return new Promise(resolve=>{
+    if(img.complete) return resolve();
+    img.onload = resolve;
+    img.onerror = resolve;
+  });
+}
+
+async function waitRenderReady(){
+  const img = el('bgImage');
+  await waitImage(img);
+  await document.fonts.ready;
+  await new Promise(r=>setTimeout(r,300));
+}
+
+/* =========================
+   LOAD RSS
+========================= */
+function loadXMLFeed() {
+  fetch('https://www.cnnindonesia.com/olahraga/rss')
+    .then(res => res.text())
+    .then(data => {
+      const xml = new DOMParser().parseFromString(data, 'text/xml');
+      displayFeedList(xml);
+    })
+    .catch(()=> alert("Gagal load RSS"));
+}
+
+document.addEventListener('DOMContentLoaded', loadXMLFeed);
+
+/* =========================
+   DISPLAY LIST
+========================= */
+function displayFeedList(xml) {
+  const items = Array.from(xml.getElementsByTagName('item'));
+  allItems = items;
+  currentIndex = 0;
+
+  el('updateDate').innerHTML =
+    "Update: " + new Date(xml.getElementsByTagName('lastBuildDate')[0].textContent).toLocaleString();
+
+  el('postList').innerHTML = '';
+  showNextItems();
+}
+
+/* =========================
+   LOAD MORE
+========================= */
+function showNextItems() {
+  const list = el('postList');
+  const next = allItems.slice(currentIndex, currentIndex + itemsPerPage);
+
+  next.forEach(item => {
+    const title = item.getElementsByTagName('title')[0].textContent;
+    const link = item.getElementsByTagName('link')[0].textContent;
+    const desc = item.getElementsByTagName('description')[0].textContent;
+
+    const match = desc.match(/<img[^>]+src=["']([^"'>]+)["']/);
+    const img = match ? match[1] : '';
+
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    card.innerHTML = `
+      <img src="${img}">
+      <div class="title">${title}</div>
+    `;
+
+    card.onclick = () => showPoster(title, img, desc, link);
+    list.appendChild(card);
+  });
+
+  currentIndex += itemsPerPage;
+
+  el('loadMoreBtn').style.display =
+    currentIndex >= allItems.length ? 'none' : 'inline-block';
+}
+
+/* =========================
+   SHOW POSTER (FIX CDN)
+========================= */
+async function showPoster(title, fallbackImg, content, link) {
+  const output = el('output');
+  output.style.display = 'block';
+
+  try {
+    const res = await fetch(link);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const ogImg = doc.querySelector('meta[property="og:image"]')?.content;
+
+    const finalImg = ogImg || fallbackImg || '';
+
+    // 🔥 CDN STABIL + SIZE FIX
+    el('bgImage').src =
+      'https://images.weserv.nl/?url=' + encodeURIComponent(finalImg) + '&w=1080&h=1080&fit=cover';
+
+    el('judulPreview').textContent = title;
+    selectedContent = content;
+
+  } catch {
+    alert('Gagal load gambar');
+  }
+}
+
+/* =========================
+   DOWNLOAD (FIX UTAMA)
+========================= */
+downloadBtn.onclick = async () => {
+
+  if(!el('output').style.display) return alert("Pilih berita dulu");
+
+  try{
+    await waitRenderReady();
+
+    const dataUrl = await htmlToImage.toPng(el('output'), {
+     pixelRatio: 3,
+  cacheBust: true,
+  style: {
+    margin: '0',
+    padding: '0',
+    boxSizing: 'border-box',
+    filter: 'brightness(1.15) contrast(1.1) saturate(1.2)' // ← Tambahan penting
+  }
+    });
+
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = 'news-808pro.png';
+    a.click();
+
+  }catch{
+    alert("Gagal generate gambar");
+  }
+};
+
+const now = new Date();
+
+const today = now.toLocaleDateString("id-ID", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric"
+});
+/* =========================
+   COPY SEO
+========================= */
+copyBtn.onclick = () => {
+  if (!selectedContent) return alert('Pilih berita dulu');
+
+  const cleanText = stripHtmlTags(selectedContent).trim();
+  const shortText = cleanText.substring(0, 180);
+  const title = el("judulPreview").textContent;
+
+const caption = `📰 Score808 Pro News 📅 ${today}
+
+🚨 ${title}
+
+🔥${shortText}...
+
+📌 Simak berita lengkap dan update terbaru di fb: @Score808pro News.
+
+#Score808 #Score808Pro #FootballNews #BreakingNews #SportsNews #tigoals #SepakBola #LigaInggris #LigaChampions #LiveScore #Trending`;
+
+  navigator.clipboard.writeText(caption).then(() => {
+    alert("✅ Caption SEO berhasil disalin!");
+  });
+};
+
+/* =========================
+   LOAD MORE BTN
+========================= */
+loadMoreBtn.onclick = showNextItems;
+document.getElementById("posterDate").textContent =
+new Date().toLocaleDateString("id-ID",{
+    day:"numeric",
+    month:"long",
+    year:"numeric"
+});
+</script>
+
+</body>
+</html>
